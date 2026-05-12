@@ -1,0 +1,7 @@
+1.@blog-proj read this for reference and change to my react and make variable color integrated to app.css
+2.home.html convert to react and make modularization
+3.TrendingSection.jsx
+StoryFeed.jsx
+RightSidebar.jsx
+make this data from dir /data/seed.js  make that dir
+4.
