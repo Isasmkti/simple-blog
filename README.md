@@ -1,84 +1,135 @@
-# Blueprint Simple Blog With Supabase
+# React Blog App with Supabase
 
-## Gambaran Umum
+## Overview
 
-Project ini adalah blog modern yang mendukung multi-user, manajemen artikel, kategori, komentar, serta sistem autentikasi berbasis Supabase. Fokus utamanya adalah membuat arsitektur yang scalable tetapi tetap ringan untuk dikembangkan sendiri.
+Project ini adalah aplikasi blog sederhana berbasis React dan Supabase.
 
-Stack yang dipakai:
+Tujuan project:
 
-* Frontend: React.js + Tailwind CSS
-* Backend: Supabase
-* Database: PostgreSQL
-* Storage: Supabase Storage
-* Authentication: Supabase Auth
-* Deployment: Vercel
+* belajar fullstack modern
+* memahami authentication
+* memahami relational database
+* implementasi CRUD
+* upload file
+* protected route
+* role based access
+
+Tech stack ini cocok untuk:
+
+* personal project
+* portfolio
+* belajar backend as a service
+* MVP startup
+* content platform sederhana
 
 ---
 
-# Arsitektur Sistem
+# Tech Stack
 
 ## Frontend
 
-Frontend menggunakan Next.js karena cocok untuk kebutuhan blog:
-
-* SEO lebih bagus
-* Routing simpel
-* Bisa SSR atau static generation
-* Mudah deploy ke Vercel
-
-Tailwind dipakai supaya styling cepat dan konsisten.
-
-Untuk state management cukup ringan:
-
-* React Query → fetch/cache data
-* Zustand → state lokal seperti theme atau editor state
+* React.js
+* Vite
+* Tailwind CSS
+* React Router DOM
+* TanStack Query
+* Zustand
 
 ---
 
 ## Backend
 
-Semua backend ditangani Supabase:
+Menggunakan Supabase sebagai backend utama.
 
-### PostgreSQL
+Fitur yang digunakan:
 
-Menyimpan semua data:
-
-* user
-* artikel
-* komentar
-* kategori
-* likes
-
-### Supabase Auth
-
-Menangani:
-
-* login
-* register
-* session
-* OAuth Google/GitHub
-
-### Supabase Storage
-
-Dipakai untuk upload:
-
-* thumbnail artikel
-* avatar user
-
-### Realtime (Opsional)
-
-Bisa dipakai untuk:
-
-* komentar realtime
-* live notification
+* PostgreSQL Database
+* Supabase Auth
+* Supabase Storage
+* Row Level Security (RLS)
+* Realtime (optional)
 
 ---
 
-# Struktur Database
+# System Architecture
+
+```txt
+Frontend (React)
+       ↓
+Supabase Client SDK
+       ↓
+Supabase Services
+ ├── Auth
+ ├── PostgreSQL
+ ├── Storage
+ └── Realtime
+```
+
+---
+
+# Features
+
+## Authentication
+
+* Register
+* Login
+* Logout
+* Session persistence
+* OAuth Google/GitHub
+* Protected routes
+
+---
+
+## Post Management
+
+* Create post
+* Edit post
+* Delete post
+* Draft system
+* Publish article
+* Upload cover image
+* Auto slug
+
+---
+
+## Categories
+
+* Create category
+* Edit category
+* Delete category
+* Filter posts by category
+
+---
+
+## Comments
+
+* Add comment
+* Reply comment
+* Delete own comment
+* Nested comment system
+
+---
+
+## User Profile
+
+* Edit profile
+* Upload avatar
+* Update bio
+* Social links
+
+---
+
+## Engagement
+
+* Like post
+* Bookmark post
+* Trending posts
+
+---
+
+# Database Design
 
 ## users
-
-Data dasar akun user.
 
 | Field      | Type        |
 | ---------- | ----------- |
@@ -91,8 +142,6 @@ Data dasar akun user.
 ---
 
 ## profiles
-
-Informasi tambahan user.
 
 | Field   | Type |
 | ------- | ---- |
@@ -110,8 +159,6 @@ Role:
 ---
 
 ## posts
-
-Menyimpan artikel blog.
 
 | Field       | Type        |
 | ----------- | ----------- |
@@ -135,8 +182,6 @@ Status:
 
 ## categories
 
-Kategori artikel.
-
 | Field | Type |
 | ----- | ---- |
 | id    | uuid |
@@ -146,8 +191,6 @@ Kategori artikel.
 ---
 
 ## post_categories
-
-Table pivot many-to-many.
 
 | Field       | Type |
 | ----------- | ---- |
@@ -159,8 +202,6 @@ Table pivot many-to-many.
 
 ## comments
 
-Komentar artikel.
-
 | Field      | Type        |
 | ---------- | ----------- |
 | id         | uuid        |
@@ -170,13 +211,9 @@ Komentar artikel.
 | parent_id  | uuid        |
 | created_at | timestamptz |
 
-`parent_id` dipakai untuk reply komentar.
-
 ---
 
 ## likes
-
-Sistem like artikel.
 
 | Field   | Type |
 | ------- | ---- |
@@ -186,7 +223,7 @@ Sistem like artikel.
 
 ---
 
-# Relasi Antar Table
+# Entity Relationship Diagram
 
 ```txt
 users
@@ -205,230 +242,203 @@ categories
 
 ---
 
-# Modul Utama
+# Project Structure
 
-## 1. Authentication
-
-Fitur:
-
-* Register
-* Login
-* Logout
-* OAuth Google/GitHub
-* Session management
-
-Role digunakan untuk membatasi akses.
-
-Contoh:
-
-* reader → hanya baca
-* writer → CRUD artikel sendiri
-* admin → akses penuh
-
----
-
-# 2. Manajemen Artikel
-
-Writer dapat:
-
-* membuat artikel
-* edit artikel
-* hapus artikel
-* simpan draft
-* publish artikel
-
-Tambahan fitur:
-
-* auto generate slug
-* upload thumbnail
-* preview artikel
-
----
-
-# 3. Sistem Kategori
-
-Kategori membantu filtering artikel.
-
-Fitur:
-
-* tambah kategori
-* edit kategori
-* hapus kategori
-* filter berdasarkan kategori
-
-Karena relasinya many-to-many, satu artikel bisa punya banyak kategori.
-
----
-
-# 4. Sistem Komentar
-
-User login bisa:
-
-* menulis komentar
-* reply komentar
-* hapus komentar sendiri
-
-Admin bisa:
-
-* moderasi komentar
-* delete komentar spam
-
----
-
-# 5. Like & Bookmark
-
-Opsional tapi bagus untuk engagement.
-
-Like:
-
-* satu user satu like per post
-
-Bookmark:
-
-* simpan artikel favorit
-
----
-
-# 6. Search
-
-Gunakan PostgreSQL Full Text Search.
-
-Fitur pencarian:
-
-* judul
-* isi artikel
-* kategori
-* author
-
-Bisa ditambah sorting:
-
-* terbaru
-* paling populer
-
----
-
-# 7. User Profile
-
-User dapat:
-
-* edit profile
-* upload avatar
-* ubah bio
-* tambah website/social link
-
----
-
-# 8. Authorization dengan RLS
-
-Bagian paling penting di Supabase.
-
-Contoh aturan:
-
-### Public
-
-Hanya bisa melihat:
-
-```sql
-status = 'published'
+```txt
+src/
+│
+├── api/
+├── assets/
+├── components/
+│   ├── ui/
+│   ├── layout/
+│   └── forms/
+│
+├── pages/
+│   ├── Home/
+│   ├── Login/
+│   ├── Register/
+│   ├── Post/
+│   ├── Dashboard/
+│   └── Profile/
+│
+├── routes/
+├── hooks/
+├── services/
+├── store/
+├── utils/
+├── lib/
+├── types/
+└── main.jsx
 ```
 
-### Writer
+---
 
-Hanya bisa edit post miliknya:
+# Installation
 
-```sql
-auth.uid() = author_id
+## Clone Repository
+
+```bash
+git clone https://github.com/your-username/blog-app.git
 ```
-
-### Admin
-
-Bypass semua policy.
 
 ---
 
-# 9. Media Management
+## Install Dependencies
 
-Struktur storage:
+```bash
+npm install
+```
+
+---
+
+## Run Development Server
+
+```bash
+npm run dev
+```
+
+---
+
+# Environment Variables
+
+Buat file `.env`.
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+---
+
+# Supabase Setup
+
+## Install SDK
+
+```bash
+npm install @supabase/supabase-js
+```
+
+---
+
+## Create Supabase Client
+
+```js
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+export const supabase = createClient(
+  supabaseUrl,
+  supabaseKey
+)
+```
+
+---
+
+# Authentication Flow
+
+```txt
+Register/Login
+      ↓
+Supabase Auth
+      ↓
+Session Created
+      ↓
+Protected Route Access
+```
+
+---
+
+# Post Flow
+
+```txt
+Writer Login
+      ↓
+Create Post
+      ↓
+Save Draft
+      ↓
+Publish
+      ↓
+Visible on Homepage
+```
+
+---
+
+# Routing Example
+
+```jsx
+<Route path="/" element={<HomePage />} />
+<Route path="/post/:slug" element={<PostDetail />} />
+<Route path="/login" element={<LoginPage />} />
+<Route path="/register" element={<RegisterPage />} />
+
+<Route path="/dashboard" element={<Dashboard />} />
+<Route path="/dashboard/posts" element={<MyPosts />} />
+```
+
+---
+
+# Storage Structure
 
 ```txt
 /posts
 /avatars
 ```
 
-Best practice:
-
-* rename file menggunakan UUID
-* compress image sebelum upload
-* validasi mime type
-
 ---
 
-# 10. Analytics
+# Authorization with RLS
 
-Opsional.
+Gunakan Row Level Security agar data lebih aman.
 
-Bisa menambahkan:
+Contoh policy:
 
-* total views
-* trending post
-* popular categories
+## Public
 
-Integrasi:
+Hanya bisa melihat post published.
 
-* Google Analytics
-* Plausible
-
----
-
-# Flow Aplikasi
-
-## Alur User
-
-```txt
-Register/Login
-      ↓
-Masuk Dashboard
-      ↓
-Buat Artikel
-      ↓
-Simpan Draft
-      ↓
-Publish
-      ↓
-Artikel tampil di Homepage
+```sql
+status = 'published'
 ```
 
 ---
 
-## Alur Pembaca
+## Writer
 
-```txt
-Buka Artikel
-      ↓
-Baca Konten
-      ↓
-Komentar / Like
+Hanya bisa edit post milik sendiri.
+
+```sql
+auth.uid() = author_id
 ```
 
 ---
 
-# Best Practice
+## Admin
+
+Memiliki akses penuh.
+
+---
+
+# Best Practices
 
 ## Gunakan UUID
 
-Lebih aman dibanding integer incremental.
+Semua primary key menggunakan UUID.
 
 ---
 
 ## Aktifkan RLS dari Awal
 
-Jangan tunggu production.
+Jangan menunggu production.
 
 ---
 
-## Pakai Index
+## Gunakan Index
 
-Index penting:
+Index yang direkomendasikan:
 
 ```sql
 slug
@@ -438,76 +448,128 @@ author_id
 
 ---
 
+## Gunakan text untuk Konten Panjang
+
+Jangan gunakan varchar untuk artikel.
+
+---
+
 ## Gunakan Trigger updated_at
 
-Supaya timestamp otomatis update.
+Agar timestamp update otomatis.
 
 ---
 
-## Simpan Konten Pakai text
-
-Karena artikel bisa panjang.
-
----
-
-# Struktur Folder Frontend
-
-```txt
-src/
- ├── app/
- ├── components/
- ├── features/
- ├── lib/
- ├── hooks/
- ├── services/
- └── types/
-```
-
----
-
-# Rekomendasi Library
-
-## Editor
-
-* TipTap
-* EditorJS
-* Markdown Editor
-
----
+# Recommended Libraries
 
 ## UI
 
-* shadcn/ui
 * Tailwind CSS
+* shadcn/ui
+* Lucide React
 
 ---
 
-## Fetching
+## Forms
+
+* React Hook Form
+* Zod
+
+---
+
+## Data Fetching
 
 * TanStack Query
 
 ---
 
-## Validation
+## Editor
 
-* Zod
+* TipTap
+* Markdown Editor
 
 ---
 
-# Fitur yang Bisa Ditambahkan Nanti
+# Development Roadmap
 
-Kalau project berkembang, bisa tambah:
+## Phase 1
 
-* newsletter
-* SEO generator
-* schedule post
-* notification
+* setup React
+* setup Supabase
+* login/register
+* protected route
+
+---
+
+## Phase 2
+
+* CRUD post
+* dashboard writer
+* image upload
+
+---
+
+## Phase 3
+
+* category system
+* comments
+* user profile
+
+---
+
+## Phase 4
+
+* likes
+* bookmarks
+* analytics
+* optimization
+
+---
+
+# Future Improvements
+
+Fitur yang bisa ditambahkan nanti:
+
 * dark mode
-* AI content assistant
-* multi-language
-* CMS dashboard
-* reading history
+* SEO optimization
+* newsletter
+* notification
+* AI assistant
+* multi language
+* schedule posting
+* admin CMS dashboard
+* realtime comment
 
 ---
 
+# Deployment
 
+## Frontend
+
+Deploy menggunakan:
+
+* Vercel
+* Netlify
+
+---
+
+## Backend
+
+Menggunakan Supabase Cloud.
+
+---
+
+# Conclusion
+
+Project ini cocok untuk belajar modern web development karena mencakup banyak konsep penting:
+
+* authentication
+* database relational
+* authorization
+* file upload
+* protected route
+* CRUD application
+* clean architecture
+* deployment
+
+Dengan React + Supabase, development jadi lebih cepat tanpa perlu setup backend manual.
