@@ -1,6 +1,35 @@
-import { trendingArticles } from '../data/seed';
+import { useTrendingStore } from '../stores/useTrendingStore';
 
 export default function TrendingSection() {
+  const { formattedTrending, loading } = useTrendingStore();
+
+  if (loading) {
+    return (
+      <section className="max-w-[1400px] mx-auto px-4 md:px-10 mb-16">
+        <div className="flex items-center gap-2 mb-8">
+          <span className="material-symbols-outlined text-zinc-900" style={{ fontVariationSettings: "'FILL' 1" }}>trending_up</span>
+          <h2 className="font-label-sm text-label-sm uppercase tracking-widest text-zinc-900">Trending on The Record</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex gap-6 animate-pulse">
+              <div className="font-headline-h1 text-headline-h1 text-black leading-none">0{i}</div>
+              <div className="flex flex-col gap-2 flex-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-zinc-200" />
+                  <div className="h-3 w-24 bg-zinc-200 rounded" />
+                </div>
+                <div className="h-4 w-full bg-zinc-200 rounded" />
+                <div className="h-4 w-3/4 bg-zinc-200 rounded" />
+                <div className="h-3 w-32 bg-zinc-100 rounded mt-1" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="max-w-[1400px] mx-auto px-4 md:px-10 mb-16">
       <div className="flex items-center gap-2 mb-8">
@@ -8,7 +37,7 @@ export default function TrendingSection() {
         <h2 className="font-label-sm text-label-sm uppercase tracking-widest text-zinc-900">Trending on The Record</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-        {trendingArticles.map((article) => (
+        {formattedTrending.map((article) => (
           <a key={article.id} href="/reading" className="flex gap-6 group">
             <div className="font-headline-h1 text-headline-h1 text-zinc-100 leading-none">{article.id}</div>
             <div className="flex flex-col gap-2">

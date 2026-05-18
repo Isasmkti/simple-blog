@@ -1,11 +1,41 @@
 import { Fragment } from 'react';
-import { storyFeed } from '../data/seed';
+import { useArticlesStore } from '../stores/useArticlesStore';
 
 export default function StoryFeed() {
+  const { formattedArticles, loading } = useArticlesStore();
+
+  if (loading) {
+    return (
+      <div className="flex-1 max-w-[720px]">
+        <div className="flex flex-col gap-12">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex justify-between items-start gap-8 animate-pulse">
+              <div className="flex-1 flex flex-col gap-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-5 h-5 rounded-full bg-zinc-200" />
+                  <div className="h-3 w-28 bg-zinc-200 rounded" />
+                </div>
+                <div className="h-5 w-full bg-zinc-200 rounded" />
+                <div className="h-4 w-full bg-zinc-100 rounded" />
+                <div className="h-4 w-3/4 bg-zinc-100 rounded" />
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="h-3 w-16 bg-zinc-100 rounded" />
+                  <div className="h-3 w-20 bg-zinc-100 rounded" />
+                  <div className="h-5 w-14 bg-zinc-100 rounded-full" />
+                </div>
+              </div>
+              <div className="w-32 h-32 md:w-40 md:h-40 flex-shrink-0 bg-zinc-200 rounded-sm" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 max-w-[720px]">
       <div className="flex flex-col gap-12">
-        {storyFeed.map((story, index) => (
+        {formattedArticles.map((story, index) => (
           <Fragment key={story.id}>
             <article className="flex justify-between items-start gap-8 group">
               <div className="flex-1 flex flex-col gap-3">
@@ -39,7 +69,7 @@ export default function StoryFeed() {
                 <img alt={story.topic} className="w-full h-full object-cover rounded-sm" src={story.image}/>
               </div>
             </article>
-            {index < storyFeed.length - 1 && <hr className="border-zinc-100"/>}
+            {index < formattedArticles.length - 1 && <hr className="border-zinc-100"/>}
           </Fragment>
         ))}
       </div>

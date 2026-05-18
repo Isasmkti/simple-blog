@@ -1,35 +1,40 @@
-import { supabase } from "../lib/supabase";
+import { query } from "../lib/queryHelper";
+
+// Reusable select fragments
+const ARTICLE_LIST_SELECT = `
+  id, title, description, content, image,
+  created_at, read_time, is_trending, is_staff_pick,
+  authors ( name, image ),
+  article_topics ( topics ( name ) )
+`;
+
+const ARTICLE_DETAIL_SELECT = `
+  id, title, description, content, image,
+  created_at, read_time, is_trending, is_staff_pick,
+  authors ( id, name, image, bio ),
+  article_topics ( topics ( id, name ) )
+`;
 
 export const articlesRepository = {
-    async getAll() {
-        const { data, error } = await supabase
-            .from("articles")
-            .select(`
-                id,
-                title,
-                description,
-                content,
-                image,
-                created_at,
-                read_time,
-                is_trending,
-                is_staff_pick,
-                authors (
-                    name,
-                    image
-                ),
-                article_topics (
-                    topics (
-                        name
-                    )
-                )
-            `);
+  getAll: () =>
+    query((sb) => sb.from("articles").select(ARTICLE_LIST_SELECT), {
+      errorMsg: "Error fetching articles",
+    }),
 
-        if (error) {
-            console.error("Error fetching articles:", error);
-            return [];
-        }
+  getById: (id) =>
+    query(
+      (sb) => sb.from("articles").select(ARTICLE_DETAIL_SELECT).eq("id", id).maybeSingle(),
+      { errorMsg: "Error fetching article", fallback: null }
+    ),
 
-        return data;
-    },
+  getByAuthor: (authorId) =>
+    query(
+      (sb) =>
+        sb
+          .from("articles")
+          .select(ARTICLE_LIST_SELECT)
+          .eq("author_id", authorId)
+          .order("created_at", { ascending: false }),
+      { errorMsg: "Error fetching articles by author" }
+    ),
 };
